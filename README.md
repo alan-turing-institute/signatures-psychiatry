@@ -7,4 +7,4 @@ This repository contains the code from the paper *A signature-based machine lear
 
 ## Data
 
-Since the data of the original study is confidential, we have included a dataset of the same format as the original one, but where all the patient IDs were replaced and all the mood scores were set to zero.
+Since the data of the original study is confidential, we have included a dataset of the same format as the original one, but where all the participant IDs were replaced and all the mood scores were set to zero.
