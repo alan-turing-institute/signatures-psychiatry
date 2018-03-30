@@ -147,8 +147,8 @@ def fit(collection, threshold, order=2):
 if __name__ == "__main__":
     # Each clinical group is associated with a point on the
     # plane. These points were found using cross-valiation.
-    random.seed(1)
-    np.random.seed(1)
+    random.seed(0)
+    np.random.seed(0)
 
     threshold=np.array([[1, 0],
                         [0, 1],

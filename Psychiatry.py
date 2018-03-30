@@ -9,6 +9,7 @@ Participant, loads the cohort, etc.
 
 import random
 import numpy as np
+import os
 from sklearn.ensemble import RandomForestRegressor
 
 from esig import tosig
@@ -98,8 +99,9 @@ def loadParticipants():
         '''
 
         participants=[]
-        for i in range(14001, 14151+1): # Valid IDs range from 14001 to 14151.
-                participant=loadCSV("cohort_data/"+str(i)+"-mood-zoom.csv")
+        for filename in os.listdir("cohort_data"):
+        #for i in range(14001, 14151+1): # Valid IDs range from 14001 to 14151.
+                participant=loadCSV("cohort_data/%s"%filename)
                 if not participant: continue
                 participants.append(participant)
         return participants
