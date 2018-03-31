@@ -99,8 +99,7 @@ def loadParticipants():
         '''
 
         participants=[]
-        for filename in os.listdir("cohort_data"):
-        #for i in range(14001, 14151+1): # Valid IDs range from 14001 to 14151.
+        for filename in sorted(os.listdir("cohort_data")):
                 participant=loadCSV("cohort_data/%s"%filename)
                 if not participant: continue
                 participants.append(participant)
