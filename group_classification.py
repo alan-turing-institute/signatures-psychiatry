@@ -23,6 +23,7 @@ import random
 
 from Psychiatry import *
 import csv
+from logger import Logger
 
 __author__ = "Imanol Perez Arribas"
 __credits__ = ["Imanol Perez Arribas", "Guy M. Goodwin", "John R. Geddes",
@@ -31,13 +32,13 @@ __version__ = "1.0.1"
 __maintainer__ = "Imanol Perez"
 __email__ = "imanol.perez@maths.ox.ac.uk"
 
-def f(bipolar, threshold):
+def f(diagnosis, threshold):
         """Maps a clinical group to the corresponding point on the
         plane.
 
         Args:
-            bipolar (int): Clinical group. Borderline if -1, healthy if 0
-            and bipolar if 1.
+            bipolar (int): Clinical group. Borderline if 0, healthy if 1
+            and bipolar if 2.
 
             threshold (list): List of 3 points on the plane.
 
@@ -46,7 +47,7 @@ def f(bipolar, threshold):
 
         """
 
-        return threshold[bipolar+1]
+        return threshold[diagnosis]
 
 
 def findMin(p, A):
@@ -95,7 +96,7 @@ def check(collection, reg, threshold, order=2):
         for X in collection:
                 x.append(list(tosig.stream2sig(np.array(X.data), order)))
 
-                y.append(f(X.bipolar, threshold=threshold))
+                y.append(f(X.diagnosis, threshold=threshold))
 
         predicted=reg.predict(x)
 
@@ -137,7 +138,7 @@ def fit(collection, threshold, order=2):
                 # The output, on the other hand, will be the point
                 # on the plane corresponding to the clinical group
                 # of the participant.
-                y.append(f(participant.bipolar, threshold=threshold))
+                y.append(f(participant.diagnosis, threshold=threshold))
 
         # We train the model using Random Forests.
         reg = RandomForestRegressor(n_estimators=100, oob_score=True)
@@ -147,25 +148,27 @@ def fit(collection, threshold, order=2):
 if __name__ == "__main__":
     # Each clinical group is associated with a point on the
     # plane. These points were found using cross-valiation.
-    random.seed(0)
-    np.random.seed(0)
+    random.seed(1)
+    np.random.seed(1)
 
     threshold=np.array([[1, 0],
                         [0, 1],
                         [-1/np.sqrt(2), -1/np.sqrt(2)]])
 
 
+    logger = Logger("group_classification")
+
     # The training and out-of-sample sets are built
-    print("Building training and out-of-sample sets...")
+    logger.log("Building training and out-of-sample sets...")
     ts, os=buildData(20, training=0.7)
-    print("Done.\n")
+    logger.log("Done.\n")
 
     # We fit data
-    print("Training the model...")
+    logger.log("Training the model...")
     reg=fit(ts, order=2, threshold=threshold)
-    print("Done.\n")
+    logger.log("Done.\n")
 
     # We check the performance of the algorithm with out of sample data
-    print("Testing the model...")
+    logger.log("Testing the model...")
     accuracy = check(os, reg, order=2, threshold=threshold)
-    print("Accuracy of predictions: " + str(round(100*accuracy, 2)) + "%")
+    logger.log("Accuracy of predictions: " + str(round(100*accuracy, 2)) + "%")

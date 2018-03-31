@@ -89,7 +89,7 @@ class Model:
 
                         # The function f returns the point for the corresponding
                         # clinical group
-                        y.append(f(X.bipolar, threshold=threshold))
+                        y.append(f(X.diagnosis, threshold=threshold))
 
                 # We find the predictions corresponding to the computed inputs
                 predicted=self.reg.predict(x)
@@ -114,8 +114,8 @@ def f(bipolar, threshold):
         plane.
 
         Args:
-            bipolar (int): Clinical group. Borderline if -1, healthy if 0
-            and bipolar if 1.
+            bipolar (int): Clinical group. Borderline if 0, healthy if 1
+            and bipolar if 2.
 
             threshold (list): List of 3 points on the plane.
 
@@ -124,7 +124,7 @@ def f(bipolar, threshold):
 
         """
 
-        return threshold[bipolar+1]
+        return threshold[bipolar]
 
 
 def findMin(p, A):
@@ -166,7 +166,7 @@ def getCategory(id):
 
         categories=["borderline", "healthy", "bipolar"]
 
-        return categories[collection[0].bipolar+1]
+        return categories[collection[0].diagnosis]
 
 
 def train(path, order=2):
@@ -209,7 +209,7 @@ def train(path, order=2):
                 # The output, on the other hand, will be te point
                 # on the plane corresponding to the clinical group
                 # of the participant.
-                y.append(f(participant.bipolar, threshold=threshold))
+                y.append(f(participant.diagnosis, threshold=threshold))
 
         # We train the model using Random Forests.
         reg = RandomForestRegressor(n_estimators=100)
@@ -317,7 +317,7 @@ def export(l, i):
         # add the stream of data to dataset.
         for participant in l:
                 for v in range(0, len(participant.data)-size, size):
-                        p=Participant(participant.data[v:v+size], participant.idNumber, participant.bipolar, participant.data[v+size])
+                        p=Participant(participant.data[v:v+size], participant.idNumber, participant.diagnosis, participant.data[v+size])
                         dataset.append(normalise(p))
 
         # Export the dataset.

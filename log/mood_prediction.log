@@ -1,0 +1,69 @@
+================ 2018-03-31 09:44:41.267334 ================
+Healthy
+	Building the data...
+	Done.
+
+	Fitting the model...
+	Done.
+
+	Checking performance with out of sample data...
+	Done.
+
+Bipolar
+	Building the data...
+	Done.
+
+	Fitting the model...
+	Done.
+
+	Checking performance with out of sample data...
+	Done.
+
+Borderline
+	Building the data...
+	Done.
+
+	Fitting the model...
+	Done.
+
+	Checking performance with out of sample data...
+	Done.
+
+###########
+  Results  
+###########
+
+
+Healthy
+-------
+          Accuracy   MAE
+Anxious      96.0%  0.43
+Elated       91.0%   0.6
+Sad          91.0%  0.46
+Angry        98.0%  0.38
+Irritable    97.0%  0.41
+Energetic    88.0%  0.71
+
+
+Bipolar
+-------
+          Accuracy   MAE
+Anxious      81.0%  0.91
+Elated       87.0%  0.72
+Sad          83.0%  0.85
+Angry        88.0%  0.64
+Irritable    82.0%  0.85
+Energetic    85.0%  0.84
+
+
+Borderline
+----------
+          Accuracy   MAE
+Anxious      70.0%   1.2
+Elated       80.0%  0.99
+Sad          70.0%  1.22
+Angry        75.0%   1.1
+Irritable    75.0%  1.05
+Energetic    85.0%  0.87
+============================================================
+

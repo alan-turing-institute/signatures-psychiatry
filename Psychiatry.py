@@ -29,10 +29,10 @@ __email__ = "imanol.perez@maths.ox.ac.uk"
 class Participant:
         idNumber=0
         data=[]
-        bipolar=1
+        diagnosis=1
         nextDay=[]
         signature=[]
-        def __init__(self, data, id_n, bipolar, nextDay):
+        def __init__(self, data, id_n, diagnosis, nextDay):
                 """Class that handles individual participants.
 
                 Args:
@@ -40,8 +40,8 @@ class Participant:
 
                     id_n (int): ID number of the participant.
 
-                    bipolar (int): Whether the participant is borderline (-1),
-                    healthy (0) or bipolar (1).
+                    diagnosis (int): Whether the participant is borderline (0),
+                    healthy (1) or bipolar (2).
 
                     nextDay (list): Next day's scores.
 
@@ -50,7 +50,7 @@ class Participant:
 
                 self.idNumber=id_n
                 self.data=data
-                self.bipolar=bipolar
+                self.diagnosis=diagnosis
                 self.nextDay=nextDay
 
 def string2datenum(s, f):
@@ -81,15 +81,14 @@ def loadCSV(file):
         # patients.csv contains the clinical group associated
         # with each participant.
         participants=list(csv.reader(open("patients.csv")))
-        bp=-1
         for l in participants:
                 if int(l[0])==n:
                         if not l[1].isdigit():
                                 return False
                         bp0=int(l[1])
                         break
-        if bp0==1: bp=1
-        if bp0==3: bp=0
+        bp = {1: 2, 2: 0, 3: 1}[bp0]
+
         participant=Participant(data, n, bp, [])
         return participant
 
@@ -155,11 +154,11 @@ def buildData(size, training=0.7, group = None):
         patients=loadParticipants()
         data=[]
         for patient in patients:
-                if group is not None and patient.bipolar != group:
+                if group is not None and patient.diagnosis != group:
                         continue
 
                 for i in range(0, len(patient.data)-size, size):
-                        p=Participant(patient.data[i:i+size], patient.idNumber, patient.bipolar, patient.data[i+size])
+                        p=Participant(patient.data[i:i+size], patient.idNumber, patient.diagnosis, patient.data[i+size])
                         data.append(normalise(p))
         random.shuffle(data)
         training_set=data[0:int(training*len(data))]

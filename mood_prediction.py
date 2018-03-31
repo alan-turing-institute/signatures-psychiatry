@@ -23,6 +23,7 @@ import matplotlib.dates as mdates
 import datetime
 
 from Psychiatry import *
+from logger import Logger
 import csv
 
 
@@ -129,43 +130,45 @@ def fit(collection, order=2):
 
 
 if __name__ == "__main__":
+        logger = Logger("mood_prediction")
+
         clinical_groups = {
-                                "Borderline": -1,
-                                "Healthy": 0,
-                                "Bipolar": 1
+                                "Borderline": 0,
+                                "Healthy": 1,
+                                "Bipolar": 2
                            }
         results = {}
 
         for group in clinical_groups:
-                print(group)
+                logger.log(group)
                 # We build the training and out of sample sets for
                 # the clinical group.
-                print("\tBuilding the data...")
+                logger.log("\tBuilding the data...")
                 ts, os=buildData(20, group=clinical_groups[group])
-                print("\tDone.\n")
+                logger.log("\tDone.\n")
 
                 # We fit data
-                print("\tFitting the model...")
+                logger.log("\tFitting the model...")
                 reg=fit(ts, order=2)
-                print("\tDone.\n")
+                logger.log("\tDone.\n")
 
                 # We check the performance of the algorithm with out of sample data
-                print("\tChecking performance with out of sample data...")
+                logger.log("\tChecking performance with out of sample data...")
                 guesses, mae = check(os, reg, order=2)
-                print("\tDone.\n")
+                logger.log("\tDone.\n")
 
                 percentage = ["%s%%"%np.round(100*p) for p in guesses]
                 mae = np.round(mae, 2)
                 results[group] = (percentage, mae)
 
-        print("===========")
-        print("  Results  ")
-        print("===========")
+        logger.log("###########")
+        logger.log("  Results  ")
+        logger.log("###########")
 
         MOODS = ["Anxious", "Elated", "Sad", "Angry", "Irritable", "Energetic"]
 
         for group in results:
-                print("\n\n%s"%group)
-                print("%s"%"-"*len(group))
+                logger.log("\n\n%s"%group)
+                logger.log("%s"%"-"*len(group))
                 df_results = pd.DataFrame(np.array(results[group]).T, index=MOODS, columns=["Accuracy", "MAE"])
-                print(df_results)
+                logger.log(df_results.to_string())
