@@ -1,4 +1,4 @@
-================ 2018-03-31 09:44:41.267334 ================
+================ 2018-12-26 14:09:34.286000 ================
 Healthy
 	Building the data...
 	Done.
@@ -37,33 +37,33 @@ Borderline
 Healthy
 -------
           Accuracy   MAE
-Anxious      96.0%  0.43
-Elated       91.0%   0.6
-Sad          91.0%  0.46
-Angry        98.0%  0.38
-Irritable    97.0%  0.41
-Energetic    88.0%  0.71
+Anxious      98.0%  0.41
+Elated       91.0%  0.53
+Sad          94.0%  0.42
+Angry        95.0%  0.35
+Irritable    95.0%  0.41
+Energetic    89.0%   0.7
 
 
 Bipolar
 -------
           Accuracy   MAE
-Anxious      81.0%  0.91
-Elated       87.0%  0.72
-Sad          83.0%  0.85
-Angry        88.0%  0.64
-Irritable    82.0%  0.85
-Energetic    85.0%  0.84
+Anxious      81.0%  0.89
+Elated       86.0%  0.77
+Sad          83.0%  0.87
+Angry        87.0%   0.7
+Irritable    80.0%  0.92
+Energetic    84.0%  0.86
 
 
 Borderline
 ----------
           Accuracy   MAE
-Anxious      70.0%   1.2
-Elated       80.0%  0.99
-Sad          70.0%  1.22
-Angry        75.0%   1.1
-Irritable    75.0%  1.05
-Energetic    85.0%  0.87
+Anxious      63.0%  1.32
+Elated       70.0%  1.21
+Sad          70.0%  1.15
+Angry        77.0%   1.0
+Irritable    77.0%  1.09
+Energetic    70.0%  1.07
 ============================================================
 

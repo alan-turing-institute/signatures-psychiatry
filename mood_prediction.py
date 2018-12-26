@@ -9,166 +9,167 @@ of the participant the following recorded observation.
 """
 
 from __future__ import print_function
-from sklearn.metrics import roc_curve, auc
 import random
 import numpy as np
-from sklearn import linear_model
 from sklearn.ensemble import RandomForestRegressor
 
 import pandas as pd
 from esig import tosig
 import matplotlib.pyplot as plt
-import time
-import matplotlib.dates as mdates
-import datetime
 
-from Psychiatry import *
+import psychiatry
 from logger import Logger
-import csv
 
 
 __author__ = "Imanol Perez Arribas"
 __credits__ = ["Imanol Perez Arribas", "Guy M. Goodwin", "John R. Geddes",
                     "Terry Lyons", "Kate E. A. Saunders"]
 __version__ = "1.0.1"
-__maintainer__ = "Imanol Perez"
+__maintainer__ = "Imanol Perez Arribas"
 __email__ = "imanol.perez@maths.ox.ac.uk"
 
-def check(collection, reg, order=2):
-        '''Calculates performance of the model
-        against out of sample data.
 
-        Arguments:
-                collection (list): The out-of-sample set.
+def test(collection, reg, order=2):
+    """Test the model against out-of-sample data.
 
-                reg (RandomForestRegressor): The trained random forest.
+    Parameters
+    ----------
+    collection : list
+        Out-of-sample set.
+    reg : RandomForestRegressor
+        Trained random forest.
+    order : int, optional
+        Order of the signature, optional.
+        Default is 2.
+    
+    Returns
+    -------
+    list
+        Accuracy.
+    list
+        MAE.
 
-                order (int): Order of the signature.
+    """
 
-        Returns:
-                list, list: Two vectors of size equal to the number of
-                mood categories - six - and where the first vector
-                indicates the percentage of correct predictions of the
-                model, where what a "correct prediction" is defined
-                as in the paper, and the second vector contains the
-                Mean Absolute Errors.
+    # x will contain the input of the model, while
+    # y will contain the output that will be used
+    # to check the accuracy of the predictions.
+    x=[]
+    y=[]
 
-        '''
+    for X in collection:
+            # The input will be the signature of the stream of
+            # the participant.
+            x.append(tosig.stream2sig(np.array(X.data), order))
 
-        # x will contain the input of the model, while
-        # y will contain the output that will be used
-        # to check the accuracy of the predictions.
-        x=[]
-        y=[]
+            # The output, on the other hand, will be the mood
+            # of the participant the following observation.
+            y.append(X.nextDay[1:len(X.nextDay)])
 
-        for X in collection:
-                # The input will be the signature of the stream of
-                # the participant.
-                x.append(list(tosig.stream2sig(np.array(X.data), order)))
+    # We make predictions based on x.
+    predicted = reg.predict(x)
 
-                # The output, on the other hand, will be the mood
-                # of the participant the following observation.
-                y.append(X.nextDay[1:len(X.nextDay)])
+    # We calculate the percentage of correct predictions and
+    # the Mean Absolute Error.
+    guesses = np.zeros(np.shape(y)[1])
+    mae = np.zeros(np.shape(y)[1])
 
-        # We make predictions based on x.
-        predicted=reg.predict(x)
+    for i in range(len(x)):
+            for j in range(len(y[i])):
+                    mae[j] += abs(y[i][j]-predicted[i][j])
+                    if abs(y[i][j]-round(predicted[i][j]))<=1:
+                            guesses[j] += 1
 
-        # We calculate the percentage of correct predictions and
-        # the Mean Absolute Error.
-        guesses=[0 for i in range(len(y[0]))]
-        mae=[0 for i in range(len(y[0]))]
+    guesses /= float(len(x))
+    mae /= float(len(x))
 
-        total=0
-        for i in range(len(x)):
-                for j in range(len(y[i])):
-                        mae[j]+=abs(y[i][j]-predicted[i][j])
-                        if abs(y[i][j]-round(predicted[i][j]))<=1:
-                                guesses[j]+=1
-                total+=1
-        guesses=[g/float(total) for g in guesses]
-        mae=[m/float(total) for m in mae]
-
-        return guesses, mae
+    return guesses, mae
 
 
 
 
 def fit(collection, order=2):
-        '''Calculates performance of the model
-        against out of sample data.
+    """Trains a random forest.
 
-        Arguments:
-                collection (list): The out-of-sample set.
+    Parameters
+    ----------
+    collection : list
+        Training set.
+    order : int, optional
+        Order of the signature.
+        Default is 2.
+    
+    Returns
+    -------
+    RandomForestRegressor
+        Trained model.
 
-                order (int): Order of the signature.
+    """
 
-        Returns:
-                RandomForestRegressor: Trained model.
+    # x will contain the inputs of the model, and y
+    # will contain the outputs.
+    x=[]
+    y=[]
 
-        '''
+    for X in collection:
+        # The input will be the signature of the stream of
+        # the participant.
+        x.append(tosig.stream2sig(np.array(X.data), order))
 
-        # x will contain the inputs of the model, and y
-        # will contain the outputs.
-        x=[]
-        y=[]
+        # The output, on the other hand, will be the mood of
+        # the participant the following observation.
+        y.append(X.nextDay[1:len(X.nextDay)])
 
-        for X in collection:
-                # The input will be the signature of the stream of
-                # the participant.
-                x.append(list(tosig.stream2sig(np.array(X.data), order)))
+    # We train the model using Random Forests.
+    reg = RandomForestRegressor(n_estimators=100)
+    reg.fit(x, y)
 
-                # The output, on the other hand, will be the mood of
-                # the participant the following observation.
-                y.append(X.nextDay[1:len(X.nextDay)])
-
-        # We train the model using Random Forests.
-        reg = RandomForestRegressor(n_estimators=100)
-        reg.fit(x, y)
-
-        return reg
+    return reg
 
 
 
 if __name__ == "__main__":
-        logger = Logger("mood_prediction")
+    logger = Logger("mood_prediction")
 
-        clinical_groups = {
-                                "Borderline": 0,
-                                "Healthy": 1,
-                                "Bipolar": 2
-                           }
-        results = {}
+    clinical_groups = {
+                        "Borderline":   0,
+                        "Healthy":      1,
+                        "Bipolar":      2
+                      }
+    results = {}
 
-        for group in clinical_groups:
-                logger.log(group)
-                # We build the training and out of sample sets for
-                # the clinical group.
-                logger.log("\tBuilding the data...")
-                ts, os=buildData(20, group=clinical_groups[group])
-                logger.log("\tDone.\n")
+    for group in clinical_groups:
+            logger.log(group)
+            # We build the training and out of sample sets for
+            # the clinical group.
+            logger.log("\tBuilding the data...")
+            ts, os = psychiatry.buildData(20, path="../data", group=clinical_groups[group])
+            logger.log("\tDone.\n")
 
-                # We fit data
-                logger.log("\tFitting the model...")
-                reg=fit(ts, order=2)
-                logger.log("\tDone.\n")
+            # We fit data
+            logger.log("\tFitting the model...")
+            reg = fit(ts, order=2)
+            logger.log("\tDone.\n")
 
-                # We check the performance of the algorithm with out of sample data
-                logger.log("\tChecking performance with out of sample data...")
-                guesses, mae = check(os, reg, order=2)
-                logger.log("\tDone.\n")
+            # We check the performance of the algorithm with out of sample data
+            logger.log("\tChecking performance with out of sample data...")
+            acc, mae = test(os, reg, order=2)
+            logger.log("\tDone.\n")
 
-                percentage = ["%s%%"%np.round(100*p) for p in guesses]
-                mae = np.round(mae, 2)
-                results[group] = (percentage, mae)
+            percentages = ["{}%".format(np.round(100 * val)) for val in acc]
+            mae = np.round(mae, 2)
+            
+            results[group] = (percentages, mae)
 
-        logger.log("###########")
-        logger.log("  Results  ")
-        logger.log("###########")
+    logger.log("###########")
+    logger.log("  Results  ")
+    logger.log("###########")
 
-        MOODS = ["Anxious", "Elated", "Sad", "Angry", "Irritable", "Energetic"]
+    MOODS = ["Anxious", "Elated", "Sad", "Angry", "Irritable", "Energetic"]
 
-        for group in results:
-                logger.log("\n\n%s"%group)
-                logger.log("%s"%"-"*len(group))
-                df_results = pd.DataFrame(np.array(results[group]).T, index=MOODS, columns=["Accuracy", "MAE"])
-                logger.log(df_results.to_string())
+    for group in results:
+            logger.log("\n\n{}".format(group))
+            logger.log("-"*len(group))
+            df_results = pd.DataFrame(np.array(results[group]).T, index=MOODS,
+                                      columns=["Accuracy", "MAE"])
+            logger.log(df_results.to_string())

@@ -1,4 +1,4 @@
-================ 2018-03-31 09:43:47.096506 ================
+================ 2018-12-26 14:08:04.633000 ================
 Building training and out-of-sample sets...
 Done.
 
@@ -6,6 +6,6 @@ Training the model...
 Done.
 
 Testing the model...
-Accuracy of predictions: 76.14%
+Accuracy of predictions: 74.62%
 ============================================================
 

@@ -11,145 +11,136 @@ of the study.
 from __future__ import print_function
 import random
 import numpy as np
-from sklearn import linear_model
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import LabelEncoder
 
 from esig import tosig
-import matplotlib.pyplot as plt
-import time
-import matplotlib.dates as mdates
-import datetime
-import random
 
-from Psychiatry import *
-import csv
+import psychiatry
 from logger import Logger
 
 __author__ = "Imanol Perez Arribas"
 __credits__ = ["Imanol Perez Arribas", "Guy M. Goodwin", "John R. Geddes",
                     "Terry Lyons", "Kate E. A. Saunders"]
 __version__ = "1.0.1"
-__maintainer__ = "Imanol Perez"
+__maintainer__ = "Imanol Perez Arribas"
 __email__ = "imanol.perez@maths.ox.ac.uk"
 
-def f(diagnosis, threshold):
-        """Maps a clinical group to the corresponding point on the
-        plane.
 
-        Args:
-            bipolar (int): Clinical group. Borderline if 0, healthy if 1
-            and bipolar if 2.
+def _findMin(p, A):
+    """Given a point p and a list of points A, returns the point
+    in A closest to p.
 
-            threshold (list): List of 3 points on the plane.
+    Parameters
+    ----------
+    p : array
+        Point on the plane.
+    A : list
+        List of points on the plane.
 
-        Returns:
-            2-d tuple: Point on the plane corresponding to the clinical group.
+    Returns
+    -------
+    tuple
+        Point in A closest to p in the Euclidean metric.
 
-        """
+    """
 
-        return threshold[diagnosis]
+    m=(-1, (0,0))
+    for p0 in A:
+            dist = np.linalg.norm(p0-np.array(p))
+            if m[0]==-1 or m[0]>dist:
+                    m = (dist, p0)
+    
+    return tuple(m[1])
 
+def test(collection, reg, threshold, order=2):
+    """Tests the model against an out-of-sample set.
 
-def findMin(p, A):
-        """Given a point p and a list of points A, returns the point
-        in A closest to p.
+    Parameters
+    ----------
+    collection : list
+        The out-of-sample set.
+    reg : RandomForestRegressor
+        Trained random forest.
+    threshold : array
+        List of 3 points on the plane.
+    order : int, optional
+        Order of the signature.
+        Default is 2.
 
-        Args:
-            p (2-d tuple): Point on the plane.
-            A (list): List of points on the plane.
+    Returns
+    -------
+    float
+        Accuracy of the predictions.
 
-        Returns:
-            2-d tuple: Point in A closest to p.
+    """
 
-        """
+    # x will contain the input of the model, while
+    # y will contain the output.
+    x=[]
+    y=[]
 
-        m=(-1, (0,0))
-        for p0 in A:
-                dist=np.linalg.norm(p0-np.array(p))
-                if m[0]==-1 or m[0]>dist:
-                        m=(dist, p0)
-        return m[1]
+    for X in collection:
+            x.append(list(tosig.stream2sig(np.array(X.data), order)))
 
-def check(collection, reg, threshold, order=2):
-        """Checks the performance of the model against an out
-        of sample set.
+            y.append(threshold[X.diagnosis])
 
-        Args:
-            collection (list): The out-of-sample set.
+    predicted_raw = reg.predict(x)
+    predicted = np.array([_findMin(prediction, threshold) for prediction in predicted_raw])
+    
+    acc = np.mean([1. if (val1 == val2).all() else 0. for val1, val2 in zip(predicted, y)])
 
-            reg (RandomForestRegressor): The trained random forest.
-
-            threshold (list): List of 3 points on the plane.
-
-            order (int): Order of the signature.
-
-        Returns:
-            float: Percentage of correct guesses of the predictions.
-
-        """
-
-        # x will contain the input of the model, while
-        # y will contain the output.
-        x=[]
-        y=[]
-
-        for X in collection:
-                x.append(list(tosig.stream2sig(np.array(X.data), order)))
-
-                y.append(f(X.diagnosis, threshold=threshold))
-
-        predicted=reg.predict(x)
-
-        guesses=0
-        total=0
-        for i in range(len(x)):
-                if set(findMin(predicted[i], threshold))==set(y[i]):
-                        guesses+=1
-                total+=1
-
-        return guesses/float(total)
+    return acc
 
 
 def fit(collection, threshold, order=2):
-        """Fits the model using the training set.
+    """Fits the model using the training set.
 
-        Args:
-            collection (list): The training set.
+    Parameters
+    ----------
+    collection : list
+        Training set.
+    threshold : array
+        List of 3 points on the plane.
+    order : int, optional
+        Order of the signature.
+        Default is 2.
 
-            threshold (list): List of 3 points on the plane.
+    Returns
+    -------
+    RandomForestRegressor
+        Trained model.
 
-            order (int): Order of the signature.
+    """
 
-        Returns:
-            RandomForestRegressor: Trained model.
+    # x will contain the input of the model, while
+    # y will contain the output.
+    x=[]
+    y=[]
 
-        """
+    for participant in collection:
+        # The input will be the signature of the stream of
+        # the participant.
+        x.append(tosig.stream2sig(np.array(participant.data), order))
 
-        # x will contain the input of the model, while
-        # y will contain the output.
-        x=[]
-        y=[]
+        # The output, on the other hand, will be the point
+        # on the plane corresponding to the clinical group
+        # of the participant.
+        y.append(threshold[participant.diagnosis])
 
-        for participant in collection:
-                # The input will be the signature of the stream of
-                # the participant.
-                x.append(list(tosig.stream2sig(np.array(participant.data), order)))
+    # We train the model using Random Forest.
+    reg = RandomForestRegressor(n_estimators=100, oob_score=True)
+    reg.fit(x, y)
 
-                # The output, on the other hand, will be the point
-                # on the plane corresponding to the clinical group
-                # of the participant.
-                y.append(f(participant.diagnosis, threshold=threshold))
+    return reg
 
-        # We train the model using Random Forests.
-        reg = RandomForestRegressor(n_estimators=100, oob_score=True)
-        reg.fit(x, y)
-
-        return reg
 if __name__ == "__main__":
     # Each clinical group is associated with a point on the
     # plane. These points were found using cross-valiation.
-    random.seed(1)
-    np.random.seed(1)
+
+    random.seed(83042)
+    np.random.seed(83042)
 
     threshold=np.array([[1, 0],
                         [0, 1],
@@ -160,15 +151,15 @@ if __name__ == "__main__":
 
     # The training and out-of-sample sets are built
     logger.log("Building training and out-of-sample sets...")
-    ts, os=buildData(20, training=0.7)
+    ts, os = psychiatry.buildData(20, "../data", training=0.7)
     logger.log("Done.\n")
 
     # We fit data
     logger.log("Training the model...")
-    reg=fit(ts, order=2, threshold=threshold)
+    reg = fit(ts, order=2, threshold=threshold)
     logger.log("Done.\n")
 
     # We check the performance of the algorithm with out of sample data
     logger.log("Testing the model...")
-    accuracy = check(os, reg, order=2, threshold=threshold)
-    logger.log("Accuracy of predictions: " + str(round(100*accuracy, 2)) + "%")
+    accuracy = test(os, reg, order=2, threshold=threshold)
+    logger.log("Accuracy of predictions: {}%".format(round(100 * accuracy, 2)))
