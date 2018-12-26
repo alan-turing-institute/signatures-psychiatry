@@ -17,9 +17,9 @@ import csv
 
 __author__ = "Imanol Perez Arribas"
 __credits__ = ["Imanol Perez Arribas", "Guy M. Goodwin", "John R. Geddes",
-                    "Terry Lyons", "Kate E. A. Saunders"]
+                "Terry Lyons", "Kate E. A. Saunders"]
 __version__ = "1.0.1"
-__maintainer__ = "Imanol Perez"
+__maintainer__ = "Imanol Perez Arribas"
 __email__ = "imanol.perez@maths.ox.ac.uk"
 
 class Participant:
