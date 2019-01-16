@@ -1,0 +1,40 @@
+================ 2019-01-16 10:02:38.807000 ================
+Loading healthy and bipolar...
+Done.
+
+Training the model...
+Done.
+
+Testing the model...
+Done.
+Loading healthy and borderline...
+Done.
+
+Training the model...
+Done.
+
+Testing the model...
+Done.
+Loading bipolar and borderline...
+Done.
+
+Training the model...
+Done.
+
+Testing the model...
+Done.
+###########
+  Results  
+###########
+Accuracy:
+           healthy   bipolar borderline
+healthy        NaN  0.824353   0.933798
+bipolar        NaN       NaN   0.797001
+borderline     NaN       NaN        NaN
+           healthy   bipolar borderline
+AUC:
+healthy        NaN  0.894988   0.975054
+bipolar        NaN       NaN   0.874532
+borderline     NaN       NaN        NaN
+============================================================
+

@@ -167,7 +167,7 @@ def normalise(participant, time=True):
 
     return participant
 
-def buildData(size, path, training=0.7, group=None):
+def buildData(size, path, training=0.7, groups=None):
     """Builds the training and out-of-sample sets.
 
     Parameters
@@ -180,7 +180,7 @@ def buildData(size, path, training=0.7, group=None):
         Percentage of the data that will be used to
         train the model.
         Default is 0.7.
-    group : int or None, optional
+    groups : list or None, optional
         If not None, only the corresponding diagnosis
         group will be used to build the dataset.
         Deafult is None.
@@ -194,16 +194,25 @@ def buildData(size, path, training=0.7, group=None):
     
     """
 
+    diagnosis_map = {
+                        "borderline":   0,
+                        "healthy":      1,
+                        "bipolar":      2
+                    }
+    if groups is not None:
+        groups = [diagnosis_map[group] for group in groups]
+        
     patients=loadParticipants(path)
     data=[]
 
     for patient in patients:
-            if group is not None and patient.diagnosis != group:
-                    continue
+        if groups is not None and patient.diagnosis not in groups:
+            continue
 
-            for i in range(0, len(patient.data)-size, size):
-                    p = Participant(patient.data[i:i+size], patient.idNumber, patient.diagnosis, patient.data[i+size])
-                    data.append(normalise(p))
+        for i in range(0, len(patient.data)-size, size):
+            p = Participant(patient.data[i:i+size], patient.idNumber,
+                            patient.diagnosis, patient.data[i+size])
+            data.append(normalise(p))
 
     random.shuffle(data)
     training_set = data[0:int(training*len(data))]
