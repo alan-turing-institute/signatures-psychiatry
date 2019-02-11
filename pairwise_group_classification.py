@@ -57,7 +57,7 @@ def _findMin(p, A):
     
     return tuple(m[1])
 
-def test(collection, reg, threshold, order=2):
+def test(collection, reg, threshold, order=2, is_sig=False):
     """Tests the model against an out-of-sample set.
 
     Parameters
@@ -71,6 +71,8 @@ def test(collection, reg, threshold, order=2):
     order : int, optional
         Order of the signature.
         Default is 2.
+    is_sig : bool, optional
+        Indicates whether the data in the training set has already been converted to the signature.
 
     Returns
     -------
@@ -85,9 +87,12 @@ def test(collection, reg, threshold, order=2):
     y=[]
 
     for X in collection:
+        if is_sig:
+            x.append(X.data)
+        else:
             x.append(list(tosig.stream2sig(np.array(X.data), order)))
 
-            y.append(threshold[X.diagnosis])
+        y.append(threshold[X.diagnosis])
 
     predicted_raw = reg.predict(x)
     predicted = np.array([_findMin(prediction, threshold) for prediction in predicted_raw])
@@ -102,7 +107,7 @@ def test(collection, reg, threshold, order=2):
     return acc, roc
 
 
-def fit(collection, threshold, order=2):
+def fit(collection, threshold, order=2, is_sig=False):
     """Fits the model using the training set.
 
     Parameters
@@ -114,6 +119,10 @@ def fit(collection, threshold, order=2):
     order : int, optional
         Order of the signature.
         Default is 2.
+    is_sig : bool, optional
+        Indicates whether the data in the training set has already been converted to the signature.
+        If True, order is unused.
+        Default is False.
 
     Returns
     -------
@@ -130,7 +139,10 @@ def fit(collection, threshold, order=2):
     for participant in collection:
         # The input will be the signature of the stream of
         # the participant.
-        x.append(tosig.stream2sig(np.array(participant.data), order))
+        if is_sig:
+            x.append(participant.data)
+        else:
+            x.append(tosig.stream2sig(np.array(participant.data), order))
 
         # The output, on the other hand, will be the point
         # on the plane corresponding to the clinical group
@@ -146,6 +158,8 @@ def fit(collection, threshold, order=2):
 if __name__ == "__main__":
     # Each clinical group is associated with a point on the
     # plane. These points were found using cross-valiation.
+
+    use_synth_sig = True
 
     random.seed(83042)
     np.random.seed(83042)
@@ -170,18 +184,24 @@ if __name__ == "__main__":
             
             # The training and out-of-sample sets are built
             logger.log("Loading {} and {}...".format(group1, group2))
-            ts, os = psychiatry.buildData(20, "../data", training=0.7,
-                                        groups=groups)
+
+            if use_synth_sig:
+                ts, os = psychiatry.buildSyntheticSigData("synthetic_signatures", cohort=772192, training=0.7,
+                                                          groups=groups)
+            else:
+                ts, os = psychiatry.buildData(20, "../data", training=0.7,
+                                              groups=groups)
+
             logger.log("Done.\n")
 
             # We fit data
             logger.log("Training the model...")
-            reg = fit(ts, order=2, threshold=threshold)
+            reg = fit(ts, order=2, threshold=threshold, is_sig=use_synth_sig)
             logger.log("Done.\n")
 
             # We check the performance of the algorithm with out of sample data
             logger.log("Testing the model...")
-            accuracy, auc = test(os, reg, order=2, threshold=threshold)
+            accuracy, auc = test(os, reg, order=2, threshold=threshold, is_sig=use_synth_sig)
             logger.log("Done.")
 
             # We save the accuracy in the results table.
