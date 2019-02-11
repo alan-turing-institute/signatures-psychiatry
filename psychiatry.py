@@ -219,3 +219,56 @@ def buildData(size, path, training=0.7, groups=None):
 
     out_of_sample = data[int(training*len(data)):len(data)]
     return training_set, out_of_sample
+
+def buildSyntheticSigData(path, cohort=239673, training=0.7, groups=None):
+    """ Builds training and out of sample sets of synthetic signatures.
+
+    Parameters
+    ----------
+    path : str
+        Directory where the data is located.
+    cohort : int
+        ID of the synthetic cohort.
+        Default is 239673.
+    training : float, optional
+        Proportion of the data that will be used to train the model.
+        Default is 0.7.
+    groups : list or None, optional
+        If not None, only the corresponding diagnosis groups will be used to build the dataset.
+        Default is None.
+
+    Returns
+    -------
+    list
+        Training set.
+    list
+        Out-of-sample set.
+
+    """
+
+    diagnosis_map = {
+        "borderline": -1,
+        "healthy": 0,
+        "bipolar": 1
+    }
+    if groups is not None:
+        groups = [diagnosis_map[group] for group in groups]
+
+    signatures = np.genfromtxt(os.path.join(path, "cohort_" + str(cohort) + "_sigs.pickle"), delimiter=',')
+    diagnoses = np.genfromtxt(os.path.join(path, "cohort_" + str(cohort) + "_diagnosis.pickle"), delimiter=',')
+    data = []
+
+    for i, (diagnosis, signature) in enumerate(zip(diagnoses, signatures)):
+        if groups is not None and diagnosis not in groups:
+            continue
+
+        # Relabel the diagnoses at this point to match the convention in the psychiatry package
+        p = Participant(signature, i, int(diagnosis+1), None)
+        data.append(p)
+
+    random.shuffle(data)
+
+    training_set = data[0:int(training * len(data))]
+    out_of_sample = data[int(training * len(data)):len(data)]
+
+    return training_set, out_of_sample
