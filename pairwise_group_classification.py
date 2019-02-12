@@ -13,8 +13,6 @@ import random
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import accuracy_score
-from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import roc_auc_score, accuracy_score
 
 from esig import tosig
@@ -157,7 +155,7 @@ def fit(collection, threshold, order=2, is_sig=False):
 
 if __name__ == "__main__":
     # Each clinical group is associated with a point on the
-    # plane. These points were found using cross-valiation.
+    # plane. These points were found using cross-validation.
 
     use_synth_sig = True
 
@@ -167,8 +165,6 @@ if __name__ == "__main__":
     threshold=np.array([[1, 0],
                         [0, 1],
                         [-1/np.sqrt(2), -1/np.sqrt(2)]])
-
-
 
     diagnosis = ("healthy", "bipolar", "borderline")
     accuracy_results = pd.DataFrame(index=diagnosis, columns=diagnosis)

@@ -183,7 +183,7 @@ def buildData(size, path, training=0.7, groups=None):
     groups : list or None, optional
         If not None, only the corresponding diagnosis
         group will be used to build the dataset.
-        Deafult is None.
+        Default is None.
     
     Returns
     -------
@@ -262,7 +262,7 @@ def buildSyntheticSigData(path, cohort=239673, training=0.7, groups=None):
         if groups is not None and diagnosis not in groups:
             continue
 
-        # Relabel the diagnoses at this point to match the convention in the psychiatry package
+        # Add participant to data array. Relabel the diagnoses to match the convention in the original dataset.
         p = Participant(signature, i, int(diagnosis+1), None)
         data.append(p)
 

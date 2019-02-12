@@ -12,8 +12,6 @@ from __future__ import print_function
 import random
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import accuracy_score
-from sklearn.preprocessing import LabelEncoder
 
 from esig import tosig
 
@@ -137,7 +135,7 @@ def fit(collection, threshold, order=2):
 
 if __name__ == "__main__":
     # Each clinical group is associated with a point on the
-    # plane. These points were found using cross-valiation.
+    # plane. These points were found using cross-validation.
 
     random.seed(83042)
     np.random.seed(83042)
