@@ -172,15 +172,17 @@ if __name__ == "__main__":
               alone is provided, or None (i.e. load original mood score data) if not)")
     args = parser.parse_args()
 
+    logger = Logger("pairwise_group_classification")
+
     random.seed(args.seed)
     np.random.seed(args.seed)
-    print ("Random seed has been set to", args.seed)
+    logger.log("Random seed has been set to {}".format(args.seed))
 
     if args.synth is None:
-        print ("Preparing to load mood score data")
+        logger.log("Preparing to load mood score data")
         use_synth_sig = False
     else:
-        print ("Preparing to load synthetic signatures from cohort", args.synth, "\n")
+        logger.log("Preparing to load synthetic signatures from cohort {}\n".format(args.synth))
         use_synth_sig = True
 
     threshold=np.array([[1, 0],
@@ -190,9 +192,6 @@ if __name__ == "__main__":
     diagnosis = ("healthy", "bipolar", "borderline")
     accuracy_results = pd.DataFrame(index=diagnosis, columns=diagnosis)
     auc_results = pd.DataFrame(index=diagnosis, columns=diagnosis)
-
-
-    logger = Logger("pairwise_group_classification")
 
     for i, group1 in enumerate(diagnosis):
         for group2 in diagnosis[i + 1:]:
