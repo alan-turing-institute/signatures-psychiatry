@@ -9,6 +9,7 @@ of the study.
 """
 
 from __future__ import print_function
+import argparse
 import random
 import numpy as np
 import pandas as pd
@@ -157,10 +158,30 @@ if __name__ == "__main__":
     # Each clinical group is associated with a point on the
     # plane. These points were found using cross-validation.
 
-    use_synth_sig = True
+    # Set up command line argument parsers
+    # --seed (optional): Sets the random seed; default is the original value used in this script.
+    # --synth (optional): If not specified at all, mood score data is loaded.
+    #                     If --synth is given without a value, cohort 772192 (synthetic signatures) is loaded.
+    #                     If a value for --synth is given, the specified cohort of synthetic signatures is loaded.
+    parser = argparse.ArgumentParser(
+        description="Perform classification on pairs of diagnoses (healthy, borderline and bipolar)")
+    parser.add_argument("--seed", type=int, default=83042,
+        help="seed for the random number generators (int, default=83042)")
+    parser.add_argument("--synth", nargs="?", type=int, const=772192,
+        help="ID of cohort of synthetic mood score signatures, if they are to be used (int, default=772192 if --synth \
+              alone is provided, or None (i.e. load original mood score data) if not)")
+    args = parser.parse_args()
 
-    random.seed(83042)
-    np.random.seed(83042)
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    print ("Random seed has been set to", args.seed)
+
+    if args.synth is None:
+        print ("Preparing to load mood score data")
+        use_synth_sig = False
+    else:
+        print ("Preparing to load synthetic signatures from cohort", args.synth, "\n")
+        use_synth_sig = True
 
     threshold=np.array([[1, 0],
                         [0, 1],
@@ -182,23 +203,23 @@ if __name__ == "__main__":
             logger.log("Loading {} and {}...".format(group1, group2))
 
             if use_synth_sig:
-                ts, os = psychiatry.buildSyntheticSigData("synthetic_signatures", cohort=772192, training=0.7,
+                ts, os = psychiatry.buildSyntheticSigData("synthetic_signatures", cohort=args.synth, training=0.7,
                                                           groups=groups)
             else:
                 ts, os = psychiatry.buildData(20, "../data", training=0.7,
                                               groups=groups)
 
-            logger.log("Done.\n")
+            logger.log("Done.")
 
             # We fit data
             logger.log("Training the model...")
             reg = fit(ts, order=2, threshold=threshold, is_sig=use_synth_sig)
-            logger.log("Done.\n")
+            logger.log("Done.")
 
             # We check the performance of the algorithm with out of sample data
             logger.log("Testing the model...")
             accuracy, auc = test(os, reg, order=2, threshold=threshold, is_sig=use_synth_sig)
-            logger.log("Done.")
+            logger.log("Done.\n")
 
             # We save the accuracy in the results table.
             accuracy_results.loc[group1][group2] = accuracy
@@ -209,7 +230,7 @@ if __name__ == "__main__":
     logger.log("  Results  ")
     logger.log("###########")
 
-    logger.log("Accuracy:")
+    logger.log("\nAccuracy:")
     logger.log(accuracy_results.to_string())
-    logger.log("AUC:")
+    logger.log("\nAUC:")
     logger.log(auc_results.to_string())
