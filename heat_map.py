@@ -304,7 +304,14 @@ def plotDensityMap(scores, plot_name):
 
     sns.kdeplot(np.array(pointsX), np.array(pointsY), shade=True, ax=ax)
     sns.kdeplot(np.array(pointsX), np.array(pointsY), n_levels=3, ax=ax, cmap="Reds")
-    plt.show()
+
+    file_name = plot_name + datetime.datetime.now().strftime("-%Y-%m-%d-%H:%M") + ".png"
+    plt.savefig(file_name)
+    plt.clf()
+    if os.path.isfile(file_name):
+        logger.log("Saved plot as {}".format(file_name))
+    else:
+        logger.log("Could not save file {}".format(file_name))
 
 
 def export(l, i, data_prepared=False, is_test=False):
