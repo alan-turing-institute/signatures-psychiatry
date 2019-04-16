@@ -202,7 +202,7 @@ if __name__ == "__main__":
             logger.log("Loading {} and {}...".format(group1, group2))
 
             if use_synth_sig:
-                ts, os = psychiatry.buildSyntheticSigData("synthetic_signatures", cohort=args.synth, training=0.7,
+                ts, os = psychiatry.buildSyntheticSigData("../data/synthetic_signatures", cohort=args.synth, training=0.7,
                                                           groups=groups)
             else:
                 ts, os = psychiatry.buildData(20, "../data", training=0.7,
