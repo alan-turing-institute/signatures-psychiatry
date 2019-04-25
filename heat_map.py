@@ -459,7 +459,6 @@ def load_and_export_synthetic_cohort(cohort):
             if len(single_participant) < buckets_per_participant:
                 single_participant.append(psychiatry.Participant(s, p_id, int(d+1), None))
             else:
-                # print("Adding {} entries for participant {} to participant array".format(len(single_participant), p_id))
                 participants.extend(single_participant)
                 single_participant = [psychiatry.Participant(s, p_id, int(d+1), None)]
 
@@ -474,8 +473,6 @@ def load_and_export_synthetic_cohort(cohort):
         random_id = random.randint(0, 1e8)
         test_participant = [p for p in participants if p.idNumber == id]
         train_participants = [p for p in participants if p.idNumber != id]
-
-        # print("Patient {} train {} test {}".format(id, len(train_participants), len(test_participant)))
 
         export(train_participants, random_id, data_prepared=True, is_test=False)
         export(test_participant, random_id, data_prepared=True, is_test=True)
