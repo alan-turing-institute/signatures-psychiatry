@@ -377,7 +377,7 @@ def get_folders(a_dir):
 
     """
 
-    return [name for name in os.listdir(a_dir)
+    return [name for name in sorted(os.listdir(a_dir))
             if os.path.isdir(os.path.join(a_dir, name))]
 
 def load_and_export_cohort():
