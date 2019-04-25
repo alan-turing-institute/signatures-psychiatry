@@ -381,6 +381,11 @@ def get_folders(a_dir):
             if os.path.isdir(os.path.join(a_dir, name))]
 
 def load_and_export_cohort():
+    """ Loads cohort data and exports two files for each participant into a folder with a random ID.
+
+    One file contains the test data, i.e. the normalised buckets of mood score data from that patient, and the second
+    contains the training data, i.e. the normalised buckets of mood score data from all other patients.
+    """
 
     # We load all participants in the study
     print("Loading cohort...")
@@ -409,6 +414,19 @@ def load_and_export_cohort():
         export(train_participants, random_id)
 
 def load_and_export_synthetic_cohort(cohort):
+    """ Loads cohort synthetic data and exports two files for each 'participant' into a folder with a random ID.
+
+    The synthetic data does not correspond to specific participants, so here we choose to define a 'participant' as
+    a group of synthetic signatures, with the group size set by the variable buckets_per_participant.
+
+    One file contains the test data, i.e. the synthetic signatures from that 'participant', and the second contains the
+    training data, i.e. the synthetic signatures from all other 'participants'.
+
+     Parameters
+     ----------
+     cohort: int
+        ID of the synthetic cohort to be analysed
+    """
 
     # Load all synthetic signatures and diagnoses
     signatures = np.genfromtxt(os.path.join("..", "data", "synthetic_signatures",
