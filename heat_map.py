@@ -84,7 +84,7 @@ class Model:
         file.close()
 
         # Each clinical group is assigned a point
-        # on the plane, which was found using crossvalidation.
+        # on the plane, which was found using cross-validation.
 
         threshold = np.array([[1, 0],                          # Borderline participants
                              [0, 1],                           # Healthy participants
@@ -206,7 +206,7 @@ def train(path, order=2, is_sig=False):
 
 
     # Each clinical group is associated with a point on the
-    # plane. These points were found using cross-valiation.
+    # plane. These points were found using cross-validation.
     threshold = np.array([[1, 0],    # Point for borderline participants
                         [0, 1],   # Point for healthy participants
                         [-1/np.sqrt(2), -1/np.sqrt(2)]]) # Point for bipolar participants
@@ -571,7 +571,7 @@ if __name__ == "__main__":
     """
     Step 3
 
-    Asign each score to the corresponding clinical group
+    Assign each score to the corresponding clinical group
 
     """
 
