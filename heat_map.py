@@ -99,8 +99,10 @@ class Model:
         for X in collection:
                 # The input is the signature of the normalised path
                 if is_sig:
+                    # If using synthetic data, the input is already a signature
                     x.append(X.data)
                 else:
+                    # If using the original data, we convert the normalised path into the signature here
                     x.append(tosig.stream2sig(np.array(X.data), order))
 
                 # The function f returns the point for the corresponding
@@ -223,8 +225,10 @@ def train(path, order=2, is_sig=False):
         # The input will be the signature of the stream of
         # the participant.
         if is_sig:
+            # If using synthetic data, the data is already stored as a signature
             x.append(participant.data)
         else:
+            # If using the original data, we convert the normalised path into the signature here
             x.append(tosig.stream2sig(np.array(participant.data), order))
 
 
