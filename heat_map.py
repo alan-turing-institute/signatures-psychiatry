@@ -514,11 +514,12 @@ if __name__ == "__main__":
     logger.log("Random seed has been set to {}\n".format(args.seed))
 
     #  Clean up the data folder (only delete files + folders produced by earlier runs of heat_map.py)
-    folders = get_folders("data/")
-    for folder in folders:
-        contents = os.listdir(os.path.join("data/", folder))
-        if folder.isdigit() and "ts.obj" in contents and "os.obj" in contents:
-            shutil.rmtree(os.path.join("data/", folder))
+    if os.path.exists("data/"):
+        folders = get_folders("data/")
+        for folder in folders:
+            contents = os.listdir(os.path.join("data/", folder))
+            if folder.isdigit() and "ts.obj" in contents and "os.obj" in contents:
+                shutil.rmtree(os.path.join("data/", folder))
 
 
     """
