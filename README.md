@@ -27,11 +27,21 @@ Let's start by setting up a virtual environment and installing the dependencies 
 If you use CPython, use `virtualenv` to set up a virtual environment named `env`.
 Activate the environment and install the packages required by this project using `pip`.
 ```
-virtualenv env
+virtualenv env                                      # Use if your default Python version is 2.7
+virtualenv --python=<path-to-your-python-2.7> env   # If not, specify the path manually
 source env/bin/activate
 pip install -r requirements.txt
 ```
-\<To do: add instructions for Conda\>
+
+If you use Anaconda, create the virtual environment with `conda` and install the `pip` package directly into the environment.
+Once the environment is activated, the dependencies can be installed using `pip` (we use `pip` because the `esig` package is not currently available through `conda`).
+```
+conda create -n sig-psy python=2.7 pip
+conda activate sig-psy
+pip install -r requirements.txt
+```
+
+With the virtual environment set up and all the dependencies installed, we can use the scripts in this project by following the instructions below.
 
 ## Generating figures and tables from the paper
 
