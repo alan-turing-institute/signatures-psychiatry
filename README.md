@@ -15,11 +15,11 @@ If not, you may find the tutorials available from [GitHub](https://help.github.c
 
 Begin by obtaining a copy of this repository using
 ```
-git clone git@github.com:alan-turing-institute/signatures-psychiatry.git
+git clone https://github.com/alan-turing-institute/signatures-psychiatry.git
 ```
 and move into the directory
 ```
-cd <your-path-name>/signatures-psychiatry
+cd signatures-psychiatry
 ```
 This project uses `Python 2.7` and the packages listed in `requirements.txt`.
 Let's start by setting up a virtual environment and installing the dependencies inside it.
