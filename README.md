@@ -23,6 +23,7 @@ cd signatures-psychiatry
 ```
 This project uses `Python 2.7` and the packages listed in `requirements.txt`.
 Let's start by setting up a virtual environment and installing the dependencies inside it.
+We give examples here for using `virtualenv` and `conda`.
 
 If you use CPython, use `virtualenv` to set up a virtual environment named `env`.
 Activate the environment and install the packages required by this project using `pip`.
@@ -82,7 +83,7 @@ python plot_path.py
 
 #### Figure 3 (top row): 
 
-The heat maps in figure 3 can be produced from either the original data or the synthetic signatures.
+The heat maps in Figure 3 can be produced from either the original data or the synthetic signatures.
 To use the original data, run
 ```
 python heat_map.py
