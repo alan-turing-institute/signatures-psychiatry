@@ -434,9 +434,9 @@ def load_and_export_synthetic_cohort(cohort):
     """
 
     # Load all synthetic signatures and diagnoses
-    signatures = np.genfromtxt(os.path.join("..", "data", "synthetic_signatures",
+    signatures = np.genfromtxt(os.path.join("synthetic-data",
                                             "cohort_" + str(cohort) + "_sigs.pickle"), delimiter=',')
-    diagnoses = np.genfromtxt(os.path.join("..", "data", "synthetic_signatures",
+    diagnoses = np.genfromtxt(os.path.join("synthetic-data",
                                            "cohort_" + str(cohort) + "_diagnosis.pickle"), delimiter=',')
 
     # We don't have distinguishable participants in the synthetic dataset, so we'll consider groups of seven signatures
