@@ -9,12 +9,11 @@ of the study.
 """
 
 from __future__ import print_function
+import argparse
 import random
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import accuracy_score
-from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import roc_auc_score, accuracy_score
 
 from esig import tosig
@@ -57,7 +56,7 @@ def _findMin(p, A):
     
     return tuple(m[1])
 
-def test(collection, reg, threshold, order=2):
+def test(collection, reg, threshold, order=2, is_sig=False):
     """Tests the model against an out-of-sample set.
 
     Parameters
@@ -71,6 +70,8 @@ def test(collection, reg, threshold, order=2):
     order : int, optional
         Order of the signature.
         Default is 2.
+    is_sig : bool, optional
+        Indicates whether the data in the training set has already been converted to the signature.
 
     Returns
     -------
@@ -85,9 +86,12 @@ def test(collection, reg, threshold, order=2):
     y=[]
 
     for X in collection:
+        if is_sig:
+            x.append(X.data)
+        else:
             x.append(list(tosig.stream2sig(np.array(X.data), order)))
 
-            y.append(threshold[X.diagnosis])
+        y.append(threshold[X.diagnosis])
 
     predicted_raw = reg.predict(x)
     predicted = np.array([_findMin(prediction, threshold) for prediction in predicted_raw])
@@ -102,7 +106,7 @@ def test(collection, reg, threshold, order=2):
     return acc, roc
 
 
-def fit(collection, threshold, order=2):
+def fit(collection, threshold, order=2, is_sig=False):
     """Fits the model using the training set.
 
     Parameters
@@ -114,6 +118,10 @@ def fit(collection, threshold, order=2):
     order : int, optional
         Order of the signature.
         Default is 2.
+    is_sig : bool, optional
+        Indicates whether the data in the training set has already been converted to the signature.
+        If True, order is unused.
+        Default is False.
 
     Returns
     -------
@@ -130,7 +138,10 @@ def fit(collection, threshold, order=2):
     for participant in collection:
         # The input will be the signature of the stream of
         # the participant.
-        x.append(tosig.stream2sig(np.array(participant.data), order))
+        if is_sig:
+            x.append(participant.data)
+        else:
+            x.append(tosig.stream2sig(np.array(participant.data), order))
 
         # The output, on the other hand, will be the point
         # on the plane corresponding to the clinical group
@@ -145,23 +156,42 @@ def fit(collection, threshold, order=2):
 
 if __name__ == "__main__":
     # Each clinical group is associated with a point on the
-    # plane. These points were found using cross-valiation.
+    # plane. These points were found using cross-validation.
 
-    random.seed(83042)
-    np.random.seed(83042)
+    # Set up command line argument parsers
+    # --seed (optional): Sets the random seed; default is the original value used in this script.
+    # --synth (optional): If not specified at all, mood score data is loaded.
+    #                     If --synth is given without a value, cohort 772192 (synthetic signatures) is loaded.
+    #                     If a value for --synth is given, the specified cohort of synthetic signatures is loaded.
+    parser = argparse.ArgumentParser(
+        description="Perform classification on pairs of diagnoses (healthy, borderline and bipolar)")
+    parser.add_argument("--seed", type=int, default=83042,
+        help="seed for the random number generators (int, default=83042)")
+    parser.add_argument("--synth", nargs="?", type=int, const=772192,
+        help="ID of cohort of synthetic mood score signatures, if they are to be used (int, default=772192 if --synth \
+              alone is provided, or None (i.e. load original mood score data) if not)")
+    args = parser.parse_args()
+
+    logger = Logger("pairwise_group_classification")
+
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    logger.log("Random seed has been set to {}".format(args.seed))
+
+    if args.synth is None:
+        logger.log("Preparing to load mood score data")
+        use_synth_sig = False
+    else:
+        logger.log("Preparing to load synthetic signatures from cohort {}\n".format(args.synth))
+        use_synth_sig = True
 
     threshold=np.array([[1, 0],
                         [0, 1],
                         [-1/np.sqrt(2), -1/np.sqrt(2)]])
 
-
-
     diagnosis = ("healthy", "bipolar", "borderline")
     accuracy_results = pd.DataFrame(index=diagnosis, columns=diagnosis)
     auc_results = pd.DataFrame(index=diagnosis, columns=diagnosis)
-
-
-    logger = Logger("pairwise_group_classification")
 
     for i, group1 in enumerate(diagnosis):
         for group2 in diagnosis[i + 1:]:
@@ -170,19 +200,25 @@ if __name__ == "__main__":
             
             # The training and out-of-sample sets are built
             logger.log("Loading {} and {}...".format(group1, group2))
-            ts, os = psychiatry.buildData(20, "../data", training=0.7,
-                                        groups=groups)
-            logger.log("Done.\n")
+
+            if use_synth_sig:
+                ts, os = psychiatry.buildSyntheticSigData("../data/synthetic_signatures", cohort=args.synth, training=0.7,
+                                                          groups=groups)
+            else:
+                ts, os = psychiatry.buildData(20, "../data", training=0.7,
+                                              groups=groups)
+
+            logger.log("Done.")
 
             # We fit data
             logger.log("Training the model...")
-            reg = fit(ts, order=2, threshold=threshold)
-            logger.log("Done.\n")
+            reg = fit(ts, order=2, threshold=threshold, is_sig=use_synth_sig)
+            logger.log("Done.")
 
             # We check the performance of the algorithm with out of sample data
             logger.log("Testing the model...")
-            accuracy, auc = test(os, reg, order=2, threshold=threshold)
-            logger.log("Done.")
+            accuracy, auc = test(os, reg, order=2, threshold=threshold, is_sig=use_synth_sig)
+            logger.log("Done.\n")
 
             # We save the accuracy in the results table.
             accuracy_results.loc[group1][group2] = accuracy
@@ -193,7 +229,7 @@ if __name__ == "__main__":
     logger.log("  Results  ")
     logger.log("###########")
 
-    logger.log("Accuracy:")
+    logger.log("\nAccuracy:")
     logger.log(accuracy_results.to_string())
-    logger.log("AUC:")
+    logger.log("\nAUC:")
     logger.log(auc_results.to_string())
