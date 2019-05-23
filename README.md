@@ -2,9 +2,9 @@
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/alan-turing-institute/signatures-psychiatry/lab-add-synth-data?urlpath=lab)
 
-This repository contains the code from the paper *A signature-based machine learning model for bipolar disorder and borderline personality disorder*:
+This repository contains the code from the paper [*A signature-based machine learning model for bipolar disorder and borderline personality disorder*](https://doi.org/10.1038/s41398-018-0334-0):
 
-> Perez Arribas, I., Goodwin, G.M., Geddes, J.R., Lyons, T. and Saunders, K.E., 2018. A signature-based machine learning model for distinguishing bipolar disorder and borderline personality disorder. _Translational Psychiatry_, _8_(1), p.274.
+> Perez Arribas, I., Goodwin, G.M., Geddes, J.R., Lyons, T. and Saunders, K.E., 2018. A signature-based machine learning model for distinguishing bipolar disorder and borderline personality disorder. _Translational Psychiatry_, _8_(1), p.274. DOI: [10.1038/s41398-018-0334-0](https://doi.org/10.1038/s41398-018-0334-0).
 
 ## Data
 
