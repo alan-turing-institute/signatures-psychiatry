@@ -10,7 +10,7 @@ This repository contains the code from the paper [*A signature-based machine lea
 - [Reproducible Research Champions](#reproducible-research-champions)
 - [Data](#data)
 - [Setting up signatures-psychiatry](#setting-up-signatures-psychiatry)
-- [Generating figures and tables from the paper](#generating-figures-and-tables-from-the-ßpaper)
+- [Generating figures and tables from the paper](#generating-figures-and-tables-from-the-paper)
 
 ## Reproducible Research Champions
 
