@@ -21,7 +21,11 @@ However, we feel that it is important that some similar data are provided for th
 ## Setting up signatures-psychiatry
 
 _The instructions below assume you are comfortable cloning a git repository and running Python scripts via the command line.
-If not, you may find the tutorials available from [GitHub](https://help.github.com/en/articles/cloning-a-repository) and [Software Carpentry](http://swcarpentry.github.io/python-novice-inflammation/10-cmdline/index.html) helpful._
+If not, you may find the tutorials available from [GitHub](https://help.github.com/en/articles/cloning-a-repository) and [Software Carpentry](http://swcarpentry.github.io/python-novice-inflammation/10-cmdline/index.html) helpful. You can also open an interactive version of this project on_ [`mybinder.org`](https://mybinder.org) _by clicking the badge below._
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/alan-turing-institute/signatures-psychiatry/lab-add-synth-data?urlpath=lab)
+
+_Once the Binder project loads, open a Python 2 console and skip down this page to ["Generating figures and tables from the paper"](#generating-tables-and-figures-from-the-paper)._
 
 Begin by obtaining a copy of this repository using
 ```
@@ -55,6 +59,8 @@ pip install -r requirements.txt
 With the virtual environment set up and all the dependencies installed, we can use the scripts in this project by following the instructions below.
 
 ## Generating figures and tables from the paper
+
+_If you are running this project via Binder (or any other Jupyter Lab installation), open a Python 2 console. The commands need a minor change in this environment - swap_ `python` _for_ `%run`_, and use the_ `shift+enter` _keys to run the cell._
 
 #### Table 1: Accuracy and area under the ROC curve
 
