@@ -6,6 +6,16 @@ This repository contains the code from the paper [*A signature-based machine lea
 
 > Perez Arribas, I., Goodwin, G.M., Geddes, J.R., Lyons, T. and Saunders, K.E., 2018. A signature-based machine learning model for distinguishing bipolar disorder and borderline personality disorder. _Translational Psychiatry_, _8_(1), p.274. DOI: [10.1038/s41398-018-0334-0](https://doi.org/10.1038/s41398-018-0334-0).
 
+## Reproducible Research Champions
+
+In May 2018, Terry Lyons was selected as one of the Alan Turing Institute's Reproducible Research Champions - academics who encourage and promote reproducible research through their own work, and who want to take their latest project to the "next level" of reproducibility.
+
+The Reproducible Research programme at the Turing is led by Kirstie Whitaker and Martin O'Reilly, with the Champions project also involving Louise Bowler from the Research Engineering Group.
+
+Each of the Champions' projects will receive several weeks of support from the Research Engineering Group throughout 2018-2019. Over this time, we will work on the project with Terry and Imanol and will track our efforts in this repository. So far, we've added installation instructions, set the project up to work with [Binder](https://mybinder.readthedocs.io/en/latest/), made it possible to use synthetic data in the same workflow and added some tests. Given our focus on reproducibility, we obviously don't intend to change any of the code's core functionality - but we hope that our work, both past and future, will make it easier for you to install, use and test out your own ideas with the methods used in the `signatures-psychiatry` project.
+
+You can find out more about the Turing's Reproducible Research Champions project [here](https://github.com/alan-turing-institute/ReproducibleResearchResources).
+
 ## Data
 
 The dataset used in the study is confidential, so we are not able to publicly release it. Access to the dataset is restricted to staff and students of the University of Oxford who have received the appropriate permission.
