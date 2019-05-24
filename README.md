@@ -8,12 +8,20 @@ This repository contains the code from the paper [*A signature-based machine lea
 
 ## Data
 
-Given that the data of the original study is confidential, we are not permitted to share it.
+The dataset used in the study is confidential, so we are not able to publicly release it. Access to the dataset is restricted to staff and students of the University of Oxford who have received the appropriate permission.
+
+However, we feel that it is important that some similar data are provided for the purposes of demonstrating how the methods outlined in the paper work. To this end, we include three sets of synthetic data, and one example of a fake entry in the dataset.
+
+**Mood score data** The original dataset contains the mood scores of participants who were either healthy or were diagnosed with borderline personality disorder or bipolar disorder. Participants recorded their mood score on a seven-point scale across six different categories (anxiety, elation, sadness. anger, irritability and energy) at approximately daily intervals. Further details of this dataset, which was collected as part of the _Automated Monitoring of Symptoms Severity_ (AMoSS) study, can be found in the [paper](https://doi.org/10.1038/s41398-018-0334-0). Access to this dataset is limited and so it is not included in this repository.
+
+**Synthetic signature data** Synthetic data is data that has been generated to exhibit the same statistical properties as the original data, without containing the original entries. The synthetic data in this repository was derived from the signatures of the original mood score data, and is therefore in signature form itself. Each dataset contains mood score signatures and their associated diagnostic classification. The synthetic signatures were derived from all mood score signatures from each of the three diagnostic classifications, so the concept of "participant" does not apply when using this dataset. Three synthetic datasets were generated and have been included in the `synthetic-data` folder.
+
+**Fake mood score data** This repository contains an example of a fake mood score dataset from one participant in `data/fake_patient.csv`. This data is not statistically related to the original mood score data but is presented in the same format in order to illustrate the data normalisation process and how Figures 1 and 2 in the paper were generated.
 
 ## Setting up signatures-psychiatry
 
 _The instructions below assume you are comfortable cloning a git repository and running Python scripts via the command line.
-If not, you may find the tutorials available from [GitHub](https://help.github.com/en/articles/cloning-a-repository) and [Software Carpentry](http://swcarpentry.github.io/python-novice-inflammation/10-cmdline/index.html) helpful._ 
+If not, you may find the tutorials available from [GitHub](https://help.github.com/en/articles/cloning-a-repository) and [Software Carpentry](http://swcarpentry.github.io/python-novice-inflammation/10-cmdline/index.html) helpful._
 
 Begin by obtaining a copy of this repository using
 ```
@@ -71,7 +79,7 @@ The content of this table was gathered manually.
 #### Figure 1: Normalised anxiety scores of a sample participant
 
 This repository contains a set of "fake" data from a single patient.
-To convert this dataset into the normalised format shown in Figure 1, run 
+To convert this dataset into the normalised format shown in Figure 1, run
 ```
 python plot_path.py
 ```
@@ -83,7 +91,7 @@ The same command used above also produces the pairwise mood score plots for the 
 python plot_path.py
 ```
 
-#### Figure 3 (top row): 
+#### Figure 3 (top row):
 
 The heat maps in Figure 3 can be produced from either the original data or the synthetic signatures.
 To use the original data, run
@@ -97,7 +105,7 @@ python heat_map.py --synth
 Alternatives to the default cohort of `772192` and random seed of `1` can be set with, for example, the options `--synth=239673 --seed=100`.
 
 The script will save three figures in `.png` format. The names of the figures and the settings can be found in the `heat_map.log` file in the `log` folder.
- 
+
 #### Figure 3 (bottom row): Accuracy and MAE of predictions of future mood score
 
 The lower row of plots in Figure 3 require mood score data, so we cannot use the synthetic signature data here.
@@ -109,4 +117,3 @@ To generate the accuracy and MAE scores, run
 python mood_prediction.py
 ```
 As the next-day mood score is required, this script cannot be applied to the synthetic data which is already in the signature format.
- 
