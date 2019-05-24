@@ -6,6 +6,12 @@ This repository contains the code from the paper [*A signature-based machine lea
 
 > Perez Arribas, I., Goodwin, G.M., Geddes, J.R., Lyons, T. and Saunders, K.E., 2018. A signature-based machine learning model for distinguishing bipolar disorder and borderline personality disorder. _Translational Psychiatry_, _8_(1), p.274. DOI: [10.1038/s41398-018-0334-0](https://doi.org/10.1038/s41398-018-0334-0).
 
+**Contents**
+- [Reproducible Research Champions](#reproducible-research-champions)
+- [Data](#data)
+- [Setting up signatures-psychiatry](#setting-up-signatures-psychiatry)
+- [Generating figures and tables from the paper](#generating-figures-and-tables-from-the-ßpaper)
+
 ## Reproducible Research Champions
 
 In May 2018, Terry Lyons was selected as one of the Alan Turing Institute's Reproducible Research Champions - academics who encourage and promote reproducible research through their own work, and who want to take their latest project to the "next level" of reproducibility.
@@ -35,7 +41,7 @@ If not, you may find the tutorials available from [GitHub](https://help.github.c
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/alan-turing-institute/signatures-psychiatry/lab-add-synth-data?urlpath=lab)
 
-_Once the Binder project loads, open a Python 2 console and skip down this page to ["Generating figures and tables from the paper"](#generating-tables-and-figures-from-the-paper)._
+_Once the Binder project loads, open a Python 2 console and skip down this page to ["Generating figures and tables from the paper"](#generating-figures-and-tables-from-the-paper)._
 
 Begin by obtaining a copy of this repository using
 ```
