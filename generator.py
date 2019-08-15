@@ -77,9 +77,13 @@ class Generator:
             
         return generated
     
-def run(directory="generated_data/", **kwargs):
-    # Create a random cohort ID number
+def run(directory="synthetic-data", **kwargs):
+    # Create a random cohort ID number, changing it if it has already been used
     cohort_id = np.random.randint(100000, 999999)
+    while os.path.isfile(os.path.join(directory, "cohort_{}_sigs.pickle".format(cohort_id))):
+        print("Cohort with id {} has already been created; trying another...".format(cohort_id))
+        cohort_id = np.random.randint(100000, 999999)
+
     
     generator = Generator()
     generator.train()
