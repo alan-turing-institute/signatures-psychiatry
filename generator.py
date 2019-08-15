@@ -7,25 +7,25 @@ import argparse
 import random
 
 import cvae
-from psychiatry import Psychiatry
+import psychiatry
 import TensorAlgebra as TA
 
 
 class Generator:
     def __init__(self, n_latent=14, seed=None):
         # Load data
-        data_raw = Psychiatry.buildData(20, split=False)
-        data = np.array([tosig.stream2logsig(np.array(participant.data), 2) for participant in tqdm(data_raw,
-                                                                                                    desc="Loading data")])
-        self.data_sig = np.array([tosig.stream2sig(np.array(participant.data), 2) for participant in tqdm(data_raw,
-                                                                                                          desc="Computing signatures")])
+        data_raw = psychiatry.buildData(20, "../data", training=1)
+        data = np.array([tosig.stream2logsig(np.array(participant.data), 2) for participant in
+                         tqdm(data_raw[0], desc="Loading data")])
+        self.data_sig = np.array([tosig.stream2sig(np.array(participant.data), 2) for participant in
+                                  tqdm(data_raw[0], desc="Computing signatures")])
 
         # We get the diagnosis:
         #   (1, 0, 0) -> Healthy
         #   (0, 1, 0) -> Bipolar
         #   (0, 0, 1) -> Borderline
 
-        self.diagnosis = np.array([np.eye(3)[participant.bipolar] for participant in data_raw])
+        self.diagnosis = np.array([np.eye(3)[participant.diagnosis] for participant in data_raw[0]])
 
         self.M = np.max(data, axis=0).reshape(1, -1)
         self.m = np.min(data, axis=0).reshape(1, -1)
